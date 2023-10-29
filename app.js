@@ -152,3 +152,37 @@ async function addEmployee() {
     console.log(`Added ${firstName} ${lastName} to the database`);
     return mainMenu();
   }
+  async function updateEmployeeRole() {
+    const employees = await db.viewAllEmployees();
+    const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
+      name: `${first_name} ${last_name}`,
+      value: id
+    }));
+  
+    const roles = await db.viewAllRoles();
+    const roleChoices = roles.map(({ id, title }) => ({
+      name: title,
+      value: id
+    }));
+  
+    const { employeeId, roleId } = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'employeeId',
+        message: "Select the employee to update:",
+        choices: employeeChoices
+      },
+      {
+        type: 'list',
+        name: 'roleId',
+        message: "Select the employee's new role:",
+        choices: roleChoices
+      }
+    ]);
+  
+    await db.updateEmployeeRole(employeeId, roleId);
+    console.log(`Updated employee's role in the database`);
+    return mainMenu();
+  }
+  
+  mainMenu();
