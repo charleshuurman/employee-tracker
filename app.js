@@ -59,3 +59,23 @@ async function viewAllEmployees() {
   return mainMenu();
 }
 
+async function addDepartment() {
+    const { departmentName } = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'departmentName',
+        message: 'Enter the name of the department:',
+        validate: input => input ? true : "Please enter a valid department name."
+      }
+    ]);
+    await db.addDepartment(departmentName);
+    console.log(`Added ${departmentName} to the database`);
+    return mainMenu();
+  }
+  
+  async function addRole() {
+    const departments = await db.viewAllDepartments();
+    const departmentChoices = departments.map(({ id, name }) => ({
+      name,
+      value: id
+    }));
