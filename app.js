@@ -106,3 +106,49 @@ async function addDepartment() {
   console.log(`Added ${title} role to the database`);
   return mainMenu();
 }
+
+async function addEmployee() {
+    const roles = await db.viewAllRoles();
+    const roleChoices = roles.map(({ id, title }) => ({
+      name: title,
+      value: id
+    }));
+  
+    const employees = await db.viewAllEmployees();
+    const managerChoices = employees.map(({ id, first_name, last_name }) => ({
+      name: `${first_name} ${last_name}`,
+      value: id
+    }));
+    managerChoices.unshift({ name: 'None', value: null });
+  
+    const { firstName, lastName, roleId, managerId } = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'firstName',
+        message: "Enter the employee's first name:",
+        validate: input => input ? true : "Please enter a valid first name."
+      },
+      {
+        type: 'input',
+        name: 'lastName',
+        message: "Enter the employee's last name:",
+        validate: input => input ? true : "Please enter a valid last name."
+      },
+      {
+        type: 'list',
+        name: 'roleId',
+        message: "Select the employee's role:",
+        choices: roleChoices
+      },
+      {
+        type: 'list',
+        name: 'managerId',
+        message: "Select the employee's manager:",
+        choices: managerChoices
+      }
+    ]);
+  
+    await db.addEmployee(firstName, lastName, roleId, managerId);
+    console.log(`Added ${firstName} ${lastName} to the database`);
+    return mainMenu();
+  }
