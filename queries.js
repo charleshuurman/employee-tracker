@@ -1,70 +1,104 @@
 const connection = require('./db.js');
 
 class DB {
-  // *** query functions:
+  constructor(connection) {
+    this.connection = connection;
+  }
 
-  //View all departaments
+  // View all departments
   async viewAllDepartments() {
-    const [rows] = await this.connection.query('SELECT * FROM department');
-    return rows;
+    try {
+      const [rows] = await this.connection.query('SELECT * FROM department');
+      return rows;
+    } catch (error) {
+      console.error('Error in viewAllDepartments:', error.message);
+      throw error;
+    }
   }
-  
-  //View all roles
+
+  // View all roles
   async viewAllRoles() {
-    const query = `
-      SELECT role.id, role.title, department.name AS department, role.salary
-      FROM role
-      LEFT JOIN department ON role.department_id = department.id
-    `;
-    const [rows] = await this.connection.query(query);
-    return rows;
+    try {
+      const query = `
+        SELECT role.id, role.title, department.name AS department, role.salary
+        FROM role
+        LEFT JOIN department ON role.department_id = department.id
+      `;
+      const [rows] = await this.connection.query(query);
+      return rows;
+    } catch (error) {
+      console.error('Error in viewAllRoles:', error.message);
+      throw error;
+    }
   }
 
-  // View All Employees
+  // View all employees
   async viewAllEmployees() {
-    const query = `
-      SELECT employee.id, employee.first_name, employee.last_name, 
-             role.title, department.name AS department, role.salary, 
-             CONCAT(manager.first_name, ' ', manager.last_name) AS manager
-      FROM employee
-      LEFT JOIN role ON employee.role_id = role.id
-      LEFT JOIN department ON role.department_id = department.id
-      LEFT JOIN employee manager ON employee.manager_id = manager.id
-    `;
-    const [rows] = await this.connection.query(query);
-    return rows;
+    try {
+      const query = `
+        SELECT employee.id, employee.first_name, employee.last_name, 
+               role.title, department.name AS department, role.salary, 
+               CONCAT(manager.first_name, ' ', manager.last_name) AS manager
+        FROM employee
+        LEFT JOIN role ON employee.role_id = role.id
+        LEFT JOIN department ON role.department_id = department.id
+        LEFT JOIN employee manager ON employee.manager_id = manager.id
+      `;
+      const [rows] = await this.connection.query(query);
+      return rows;
+    } catch (error) {
+      console.error('Error in viewAllEmployees:', error.message);
+      throw error;
+    }
   }
 
-  //Add a Department
+  // Add a department
   async addDepartment(departmentName) {
-    const query = 'INSERT INTO department (name) VALUES (?)';
-    const [result] = await this.connection.query(query, [departmentName]);
-    return result;
+    try {
+      const query = 'INSERT INTO department (name) VALUES (?)';
+      const [result] = await this.connection.query(query, [departmentName]);
+      return result;
+    } catch (error) {
+      console.error('Error in addDepartment:', error.message);
+      throw error;
+    }
   }
 
-  //Add a Role
+  // Add a role
   async addRole(title, salary, departmentId) {
-    const query = 'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)';
-    const [result] = await this.connection.query(query, [title, salary, departmentId]);
-    return result;
+    try {
+      const query = 'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)';
+      const [result] = await this.connection.query(query, [title, salary, departmentId]);
+      return result;
+    } catch (error) {
+      console.error('Error in addRole:', error.message);
+      throw error;
+    }
   }
 
-  //Add an Employee
+  // Add an employee
   async addEmployee(firstName, lastName, roleId, managerId) {
-    const query = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
-    const [result] = await this.connection.query(query, [firstName, lastName, roleId, managerId]);
-    return result;
+    try {
+      const query = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
+      const [result] = await this.connection.query(query, [firstName, lastName, roleId, managerId]);
+      return result;
+    } catch (error) {
+      console.error('Error in addEmployee:', error.message);
+      throw error;
+    }
   }
 
-  //Update an Employee Role
+  // Update an employee role
   async updateEmployeeRole(employeeId, roleId) {
-    const query = 'UPDATE employee SET role_id = ? WHERE id = ?';
-    const [result] = await this.connection.query(query, [roleId, employeeId]);
-    return result;
+    try {
+      const query = 'UPDATE employee SET role_id = ? WHERE id = ?';
+      const [result] = await this.connection.query(query, [roleId, employeeId]);
+      return result;
+    } catch (error) {
+      console.error('Error in updateEmployeeRole:', error.message);
+      throw error;
+    }
   }
-
-
-  
 }
 
 module.exports = new DB(connection);
