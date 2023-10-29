@@ -79,3 +79,30 @@ async function addDepartment() {
       name,
       value: id
     }));
+
+
+  const { title, salary, departmentId } = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'title',
+      message: 'Enter the role title:',
+      validate: input => input ? true : "Please enter a valid role title."
+    },
+    {
+      type: 'input',
+      name: 'salary',
+      message: 'Enter the role salary:',
+      validate: input => !isNaN(input) ? true : "Please enter a valid salary."
+    },
+    {
+      type: 'list',
+      name: 'departmentId',
+      message: 'Select the department:',
+      choices: departmentChoices
+    }
+  ]);
+
+  await db.addRole(title, salary, departmentId);
+  console.log(`Added ${title} role to the database`);
+  return mainMenu();
+}
