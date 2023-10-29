@@ -1,0 +1,61 @@
+const inquirer = require('inquirer');
+const db = require('./db');
+
+async function mainMenu() {
+  const { action } = await inquirer.prompt([
+    {
+      type: 'list',
+      name: 'action',
+      message: 'What would you like to do?',
+      choices: [
+        'View All Departments',
+        'View All Roles',
+        'View All Employees',
+        'Add a Department',
+        'Add a Role',
+        'Add an Employee',
+        'Update an Employee Role',
+        'Exit'
+      ]
+    }
+  ]);
+
+  switch (action) {
+    case 'View All Departments':
+      return viewAllDepartments();
+    case 'View All Roles':
+      return viewAllRoles();
+    case 'View All Employees':
+      return viewAllEmployees();
+    case 'Add a Department':
+      return addDepartment();
+    case 'Add a Role':
+      return addRole();
+    case 'Add an Employee':
+      return addEmployee();
+    case 'Update an Employee Role':
+      return updateEmployeeRole();
+    case 'Exit':
+      console.log('Goodbye!');
+      process.exit();
+  }
+}
+
+async function viewAllDepartments() {
+  const departments = await db.viewAllDepartments();
+  console.table(departments);
+  return mainMenu();
+}
+
+async function viewAllRoles() {
+  const roles = await db.viewAllRoles();
+  console.table(roles);
+  return mainMenu();
+}
+
+async function viewAllEmployees() {
+  const employees = await db.viewAllEmployees();
+  console.table(employees);
+  return mainMenu();
+}
+
